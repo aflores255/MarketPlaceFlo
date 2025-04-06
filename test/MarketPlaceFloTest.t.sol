@@ -8,20 +8,14 @@ import "forge-std/Test.sol";
 import "../lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "../src/MarketPlaceFlo.sol";
 
-
 //Mock NFT
-contract MockNFT is ERC721("MockNFT","MNFT"){
-
-    function mint(address to_, uint256 tokenId_) external{
-
-        _mint(to_,tokenId_);
-
+contract MockNFT is ERC721("MockNFT", "MNFT") {
+    function mint(address to_, uint256 tokenId_) external {
+        _mint(to_, tokenId_);
     }
-
 }
 
-contract MarketPlaceFloTest is Test{
-
+contract MarketPlaceFloTest is Test {
     //Variables
     address deployer = vm.addr(1);
     address randomUser1 = vm.addr(2);
@@ -29,26 +23,24 @@ contract MarketPlaceFloTest is Test{
     MarketPlaceFlo marketPlace;
     MockNFT mockNFT;
     uint256 tokenId = 0;
-    function setUp() public{
+
+    function setUp() public {
         mockNFT = new MockNFT();
         vm.startPrank(deployer);
         marketPlace = new MarketPlaceFlo(deployer);
         vm.stopPrank();
 
         vm.startPrank(randomUser1);
-        mockNFT.mint(randomUser1,0);
+        mockNFT.mint(randomUser1, 0);
         vm.stopPrank();
-
     }
 
-    function testMintNFT() public view{
-
+    function testMintNFT() public view {
         address ownerOf = mockNFT.ownerOf(tokenId);
         assert(ownerOf == randomUser1);
-
     }
 
-    function testPriceZero() public{
+    function testPriceZero() public {
         uint256 price_ = 0;
         vm.startPrank(randomUser1);
         vm.expectRevert("Price must be above 0");
@@ -56,7 +48,7 @@ contract MarketPlaceFloTest is Test{
         vm.stopPrank();
     }
 
-        function testNotNFTOwner() public{
+    function testNotNFTOwner() public {
         uint256 price_ = 1 ether;
         uint256 tokenId_ = 1;
         mockNFT.mint(randomUser2, tokenId_);
@@ -66,7 +58,7 @@ contract MarketPlaceFloTest is Test{
         vm.stopPrank();
     }
 
-    function testListNFT() public{
+    function testListNFT() public {
         uint256 price_ = 10 ether;
         vm.startPrank(randomUser1);
         (address sellerBefore,,,) = marketPlace.listing(address(mockNFT), tokenId);
@@ -77,7 +69,7 @@ contract MarketPlaceFloTest is Test{
         vm.stopPrank();
     }
 
-    function testCancelNotOwner() public{
+    function testCancelNotOwner() public {
         uint256 price_ = 10 ether;
         vm.startPrank(randomUser1);
         (address sellerBefore,,,) = marketPlace.listing(address(mockNFT), tokenId);
@@ -91,10 +83,9 @@ contract MarketPlaceFloTest is Test{
         vm.expectRevert("Did not list this NFT");
         marketPlace.cancelList(address(mockNFT), tokenId);
         vm.stopPrank();
-
     }
 
-        function testCancelListing() public{
+    function testCancelListing() public {
         uint256 price_ = 10 ether;
         vm.startPrank(randomUser1);
         (address sellerBefore,,,) = marketPlace.listing(address(mockNFT), tokenId);
@@ -102,17 +93,16 @@ contract MarketPlaceFloTest is Test{
         (address sellerAfter,,,) = marketPlace.listing(address(mockNFT), tokenId);
 
         assert(sellerBefore == address(0) && sellerAfter == randomUser1);
-    
+
         marketPlace.cancelList(address(mockNFT), tokenId);
         (address sellerAfterCancel,,,) = marketPlace.listing(address(mockNFT), tokenId);
 
         assert(sellerAfterCancel == address(0));
-       
-        vm.stopPrank();
 
+        vm.stopPrank();
     }
 
-    function testBuyUnlistedNFT() public{
+    function testBuyUnlistedNFT() public {
         uint256 userBalance = 50 ether;
         vm.startPrank(randomUser2);
         vm.deal(randomUser2, userBalance);
@@ -120,10 +110,9 @@ contract MarketPlaceFloTest is Test{
         marketPlace.buyNFTEther(address(mockNFT), tokenId);
 
         vm.stopPrank();
-
     }
 
-    function testBuyIncorrectPrice() public{
+    function testBuyIncorrectPrice() public {
         uint256 price_ = 10 ether;
         uint256 userBalance = 50 ether;
         vm.startPrank(randomUser1);
@@ -133,7 +122,6 @@ contract MarketPlaceFloTest is Test{
 
         assert(sellerBefore == address(0) && sellerAfter == randomUser1);
         vm.stopPrank();
-        
 
         vm.startPrank(randomUser2);
         vm.deal(randomUser2, userBalance);
@@ -141,10 +129,9 @@ contract MarketPlaceFloTest is Test{
         marketPlace.buyNFTEther{value: price_ - 1 wei}(address(mockNFT), tokenId);
 
         vm.stopPrank();
-
     }
 
-     function testBuyNFT() public{
+    function testBuyNFT() public {
         uint256 price_ = 10 ether;
         uint256 userBalance = 50 ether;
         vm.startPrank(randomUser1);
@@ -155,7 +142,6 @@ contract MarketPlaceFloTest is Test{
         assert(sellerBefore == address(0) && sellerAfter == randomUser1);
         mockNFT.approve(address(marketPlace), tokenId);
         vm.stopPrank();
-        
 
         vm.startPrank(randomUser2);
         vm.deal(randomUser2, userBalance);
@@ -173,13 +159,5 @@ contract MarketPlaceFloTest is Test{
         assert(balanceAfterUser1 == balanceBeforeUser1 + price_);
         assert(balanceAfterUser2 == balanceBeforeUser2 - price_);
         vm.stopPrank();
-
     }
-
-    
-
-
-
-
 }
-
