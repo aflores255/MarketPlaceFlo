@@ -1,9 +1,9 @@
-# 🛒 MarketPlaceFlo
+# 🛒 MarketPlaceFlo – Decentralized NFT Marketplace (ERC-721)
 
 ## 📌 Description
-**MarketPlaceFlo** is a Solidity-based smart contract that enables users to list, buy, and cancel NFTs using Ether. Compatible with any ERC-721 collection, this marketplace allows secure peer-to-peer trading.
+**MarketPlaceFlo** is a Solidity smart contract that enables secure, on-chain peer-to-peer trading of NFTs using Ether on any EVM-compatible blockchain. Fully compatible with all **ERC-721** collections, it allows users to list, purchase, and delist NFTs directly through the contract with no intermediaries.
 
-The contract is built using **OpenZeppelin** for security and best practices, and has been thoroughly tested with **Foundry**.
+Built on top of **OpenZeppelin's** trusted libraries, follows industry best practices for smart contract development, ensuring secure and maintainable code. It has been rigorously tested using **Foundry**, covering core functionality and edge cases to guarantee reliability and protection against common vulnerabilities.
 
 ---
 
@@ -20,6 +20,12 @@ The contract is built using **OpenZeppelin** for security and best practices, an
 ---
 
 ## 📜 Contract Details
+
+### 🏗️ Constructor
+
+| **Component** | **Description** |
+|---------------|-----------------|
+| `constructor(address owner)` | Initializes the contract by transferring ownership to the specified `owner` address. This enables access control over owner-only functions using OpenZeppelin's `Ownable` module. |
 
 ### 📡 Events
 
@@ -57,23 +63,20 @@ The contract has been thoroughly tested using **Foundry**. The test suite covers
 | `testBuyIncorrectPrice` | Ensures purchase fails if price doesn't match. |
 | `testBuyNFT` | Full test of the buy flow, including NFT and ETH transfer. |
 
----
+### 🧪 How to Run Tests
 
-## 🛠️ How to Use
+To run the test suite with Foundry:
 
-### 🔧 Prerequisites
+```bash
+forge test
 
-- Install **Foundry**: [Installation Guide](https://book.getfoundry.sh/)
-- Have a compatible Ethereum wallet (e.g., MetaMask).
-- Acquire testnet ETH for testing/deployment (e.g., Goerli, Sepolia).
+### 📊 Coverage Report
 
-### 🚀 Deployment Steps
+| File                    | % Lines         | % Statements     | % Branches      | % Functions     |
+|-------------------------|------------------|-------------------|------------------|------------------|
+| `src/MarketPlaceFlo.sol` | 100.00% (21/21) | 100.00% (20/20) | 91.67% (11/12) | 100.00% (3/3)   |
 
-1. Clone the repository.
-2. Navigate to the project directory.
-3. Install dependencies (if applicable).
-4. Run tests using `forge test`.
-5. Deploy the contract using Foundry or your preferred deployment tool.
+> 🔍 **Note**: Coverage is not 100% for branches due to one specific edge case — the branch that reverts with `"Transaction Error"` on failed Ether transfers. Simulating that revert requires a test using a contract that intentionally rejects Ether. 
 
 ---
 

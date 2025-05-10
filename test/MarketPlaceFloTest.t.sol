@@ -7,6 +7,7 @@ pragma solidity 0.8.28;
 import "forge-std/Test.sol";
 import "../lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "../src/MarketPlaceFlo.sol";
+import "../lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
 
 //Mock NFT
 contract MockNFT is ERC721("MockNFT", "MNFT") {
