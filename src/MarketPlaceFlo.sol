@@ -29,9 +29,18 @@ contract MarketPlaceFlo is Ownable, ReentrancyGuard {
         address indexed buyer_, address indexed seller_, address indexed nftAddress_, uint256 tokenId_, uint256 price_
     );
 
+    /**
+     * @notice Initializes the contract and sets the specified address as the owner.
+     * @param owner The address that will be assigned as the initial owner of the contract.
+     */
     constructor(address owner) Ownable(owner) {}
 
-    //List NFT
+    /**
+     * @notice Lists an NFT for sale at a specified price in Ether.
+     * @param nftAddress_ The address of the ERC-721 contract.
+     * @param tokenId_ The ID of the NFT to be listed.
+     * @param price_ The sale price in wei.
+     */
     function listNFT(address nftAddress_, uint256 tokenId_, uint256 price_) external nonReentrant {
         require(price_ > 0, "Price must be above 0");
         address owner_ = IERC721(nftAddress_).ownerOf(tokenId_);
@@ -45,8 +54,11 @@ contract MarketPlaceFlo is Ownable, ReentrancyGuard {
         emit NFTListing(msg.sender, nftAddress_, tokenId_, price_);
     }
 
-    //Buy NFT
-
+    /**
+     * @notice Purchases a listed NFT by paying the exact asking price in Ether.
+     * @param nftAddress_ The address of the ERC-721 contract.
+     * @param tokenId_ The ID of the NFT being purchased.
+     */
     function buyNFTEther(address nftAddress_, uint256 tokenId_) external payable nonReentrant {
         Listing memory listing_ = listing[nftAddress_][tokenId_];
 
@@ -63,8 +75,11 @@ contract MarketPlaceFlo is Ownable, ReentrancyGuard {
         emit NFTSold(msg.sender, listing_.seller, listing_.nftCollection, listing_.tokenId, listing_.price);
     }
 
-    //Cancel List
-
+    /**
+     * @notice Cancels an active listing for an NFT.
+     * @param nftAddress_ The address of the ERC-721 contract.
+     * @param tokenId_ The ID of the NFT listing to cancel.
+     */
     function cancelList(address nftAddress_, uint256 tokenId_) external nonReentrant {
         Listing memory listing_ = listing[nftAddress_][tokenId_];
         require(listing_.seller == msg.sender, "Did not list this NFT");
