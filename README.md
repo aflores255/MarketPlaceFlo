@@ -69,6 +69,7 @@ To run the test suite with Foundry:
 
 ```bash
 forge test
+```
 
 ### 📊 Coverage Report
 
